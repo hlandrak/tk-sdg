@@ -19,9 +19,9 @@ from rest_framework import routers
 from sdg import views
 
 
-router = routers.DeafultRouter()
-router.register(r'documents',views.DocumentView,'Document')
-router.register(r'sdgs',views.SDGView,'SDG')
+router = routers.DefaultRouter()
+router.register(r'documents',views.DocumentView,'document')
+router.register(r'sdgs',views.SDGView,'sdg')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -4,7 +4,7 @@ from .models import Document,SDG
 class DocuemntSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ('id','name','url', 'sdgs')
+        fields = ('id','name','url', 'sdgs','sdg_strength')
         
 class SDGSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,7 +4,7 @@ from .models import Document
 from .models import SDG
 # Register your models here.
 class DocuementAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url','sdgs')
+    list_display = ('name', 'url','sdgs','sdg_strength')
 
 class SDGAdmin(admin.ModelAdmin):
     list_display =('number', 'description','hex')
