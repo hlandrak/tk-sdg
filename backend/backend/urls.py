@@ -25,5 +25,5 @@ router.register(r'sdgs',views.SDGView,'sdg')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include(router.urls)),
+    path('api/', include(router.urls)),
 ]

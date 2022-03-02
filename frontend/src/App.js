@@ -5,7 +5,8 @@ import axios from 'axios';
 
 import TableView from './pages/tableView';
 import FlowChart from './pages/flowChart';
-import BubbleChart from './pages/bubbleChart';
+import BubbleChartPage from './pages/bubbleChart';
+import { cookieStorageManager } from '@chakra-ui/react';
 
 
 class App extends Component {
@@ -23,7 +24,9 @@ class App extends Component {
 
 componentDidMount() {
   this.refresh();
+  //console.log(this.state.documents); <-- hvorfor er ikke state oppdatert
 }
+
 
 refresh = () => {
   axios.get("http://localhost:8000/api/documents/").then((res)=> this.setState({documents: res.data})).catch((err)=>console.log(err));
@@ -31,10 +34,21 @@ refresh = () => {
   console.log("denne kjører");
 };
 
+changeToArrays =()=> {
+  //console.log(this.state.documents.length);
+  for (let i =0 ; i < this.state.documents.length; i++){
+    console.log('hei');
+    console.log(this.state.documents[i].sdgs);
+    // Her må du fikse noe Ivar!
+    //this.state.documents[i].sdgs = JSON.parse("["+this.state.documents[i].sdgs+"]");
+    //this.state.documents[i].sdgs_strength = JSON.parse("["+this.state.documents[i].sdgs_strength+"]");
+  }
+};
 
 
   render() {
-    console.log(this.state.documents);
+    //console.log(this.state.documents.length);
+    this.changeToArrays();
     return(
       <div>
       <h2>Trondheim kommune SDG oversikt</h2>
@@ -47,9 +61,9 @@ refresh = () => {
           </ul>
           </nav>
           <Routes>
-              <Route path='/tabel' element={<TableView/>} />
-              <Route path='/bobble' element={<BubbleChart/>} />
-              <Route path='/flyt' element={<FlowChart/>} />
+              <Route path='/tabel' element={<TableView documents={this.state.documents} sdgs={this.state.sdgs}/>} />
+              <Route path='/bobble' element={<BubbleChartPage documents={this.state.documents} sdgs={this.state.sdgs}/>} />
+              <Route path='/flyt' element={<FlowChart documents={this.state.documents} sdgs={this.state.sdgs}/>} />
           </Routes>
       </Router>
       </div>
