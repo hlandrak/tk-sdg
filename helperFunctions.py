@@ -2,21 +2,23 @@ import re
 import pdfplumber
 
 def pdfToText(fileName):
-    """Generate strings from PDF file"""
-    all_text = ""
+    """Generate strings from PDF file
+    fileName: name of the PDF file"""
+    allText = ""
     with pdfplumber.open(fileName) as pdf:
         for page in pdf.pages:
-            all_text += page.extract_text()
-    # print(all_text)
-    all_text = re.sub('\s', ' ', all_text)
-    # print(all_text)
-    return all_text
+            allText += page.extract_text()
+    # print allText)
+    allText = re.sub('\s', ' ', allText)
+    # print allText)
+    return  allText
 
 regPlan = pdfToText('regional-planstrategi-2016-2010.pdf')
 
-def txtToStr(filename):
-    """Produce string from file"""
-    f = open(filename, 'r')
+def txtToStr(fileName):
+    """Produce string from file
+    fileName: name of .txt document"""
+    f = open(fileName, 'r')
     textLines = f.readlines()
     text = ""
     for line in textLines:
