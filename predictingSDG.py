@@ -114,13 +114,56 @@ pipe.fit(X_train, y_train)
 
 X_test = [kirkepol, regPlan, kultur]
 
-def tfidfModel(testData):
+def tfidfModel(trainingData, testData):
     """
     Return predicted probabilities for Pipeline (pipe).
     """
+    pipe = Pipeline ([("cleaner", predictors()),
+                 ("vectorizer", tfidfVector),
+                 ("classifier", LogisticRegression(multi_class='ovr', solver='liblinear'))])
+
+    pipe.fit(trainingData[0], trainingData[1])
+
     predicted = pipe.predict_proba(testData)
     return predicted
 
+sdgPredictions = tfidfModel([X_train, y_train], X_test)
+print(sdgPredictions)
+
 tfidfModel(X_test)
 
-tfidfModel([byplanWiki])
+tfidfModel([havbruk])
+
+import wikiscraper as ws
+
+ws.lang("no")
+
+abstractList = []
+with open("randWiki.txt", "a") as file:
+    for i in range(1000):
+        result = ws.searchBySlug("Spesial:Tilfeldig")
+        try:
+            abstractList = result.getAbstract()
+            for par in abstractList:
+                if not "[rediger | rediger kilde]" in par:
+                    file.write(par + "\n")
+        except:
+            pass
+        
+X_train2 = []
+y_train2 = []
+for i in range(17):
+    with open(f'sdgs/sdg{i+1}.txt', 'r') as f:
+        for line in f:
+            line = re.sub('\s', ' ', line)
+            X_train2.append(line)
+            y_train2.append(0)
+
+with open('randWiki.txt', 'r') as f:
+    for line in f:
+        line = re.sub('\s', ' ', line)
+        X_train2.append(line)
+        y_train2.append(1)
+        
+baerBool = tfidfModel([X_train2, y_train2], X_test)
+sdgPredictions = tfidfModel([X_train, y_train], X_test)
