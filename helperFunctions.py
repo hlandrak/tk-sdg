@@ -13,8 +13,6 @@ def pdfToText(fileName):
     # print allText)
     return  allText
 
-regPlan = pdfToText('regional-planstrategi-2016-2010.pdf')
-
 def txtToStr(fileName):
     """Produce string from file
     fileName: name of .txt document"""
@@ -25,5 +23,3 @@ def txtToStr(fileName):
         text += line
     text = re.sub('\s', ' ', text)
     return text
-
-brautTxt = txtToStr("braut.txt")
