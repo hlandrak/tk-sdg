@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import DocuemntSerializer,SDGSerializer
-from .models import Document,SDG
+from .models import Document, SDG
 
 # Create your views here.
 

@@ -13,7 +13,7 @@ class Document(models.Model):
     #sdgs = ArrayField(models.IntegerField()) #This doesn't work with giving a 1,1,1,1 strin 
     sdgs = models.CharField(validators=[validate_comma_separated_integer_list],max_length=33)
     sdg_strength = models.CharField(max_length=255)
-    def __str__(self) -> str:   
+    def __str__(self):   
         return self.name  
     
 
@@ -21,3 +21,5 @@ class SDG(models.Model):
     number = models.IntegerField()
     description = models.CharField(max_length=255)
     hex = models.CharField(max_length=10)
+    def __str__(self):   
+        return self.description  
