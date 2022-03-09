@@ -5,12 +5,13 @@ driver = webdriver.Chrome(ChromeDriverManager().install())
 from bs4 import BeautifulSoup as BS
 
 def runUNScrape():
-# Scraping sdgs from FN.
+    """Scraping sdgs from FN. Takes SDG description from UN's website and writes them into txt files.
+    Takes no arguments."""
     sdgs = []
     driver.get("https://www.fn.no/om-fn/fns-baerekraftsmaal")
     soup = BS(driver.page_source, features="html.parser")
-    title_cards = soup.find_all(class_="header_gols_content_item")
-    for card in title_cards:
+    titleCards = soup.find_all(class_="header_gols_content_item")
+    for card in titleCards:
         a = card.find("a", href=True)
         sdgs.append(a["href"])
     print(sdgs)
