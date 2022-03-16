@@ -78,8 +78,10 @@ pipe.fit(createTrainingSdgInstance())
 def tfidfModel(trainingData, testData):
     """
     Return predicted probabilities for Pipeline (pipe).
-    trainingData: xTrain and yTrain (output of createTrainingSdgInstance)
-    testData: a list of strings to be predicted
+    
+    Args:
+        trainingData: xTrain and yTrain (output of createTrainingSdgInstance)
+        testData: a list of strings to be predicted
     """
     pipe = Pipeline ([("cleaner", predictors()),
                  ("vectorizer", tfidfVector),
@@ -95,23 +97,6 @@ def sdgPredict(listOfStrings):
     listOfStrings: a list string objects which should be compared to the SDGs"""
     sdgPredictions = tfidfModel([createTrainingSdgInstance()], listOfStrings)
     return sdgPredictions
-
-
-import wikiscraper as ws
-
-ws.lang("no")
-
-abstractList = []
-with open("randWiki.txt", "a") as file:
-    for i in range(1000):
-        result = ws.searchBySlug("Spesial:Tilfeldig")
-        try:
-            abstractList = result.getAbstract()
-            for par in abstractList:
-                if not "[rediger | rediger kilde]" in par:
-                    file.write(par + "\n")
-        except:
-            pass
         
 X_train2 = []
 y_train2 = []
