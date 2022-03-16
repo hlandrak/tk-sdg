@@ -1,3 +1,4 @@
+import numbers
 from pydoc import describe
 from wsgiref.validate import validator
 from django.db import models
@@ -10,9 +11,9 @@ class Document(models.Model):
     #saves the sdgs and the sdg_strength as a charfield, i.e. strings. 
     name = models.CharField(max_length=255)
     url = models.URLField(max_length=255)
-    #sdgs = ArrayField(models.IntegerField()) #This doesn't work with giving a 1,1,1,1 strin 
+    #sdgs = ArrayField(models.CharField(max_length=1)) #This doesn't work with giving a 1,1,1,1 strin 
     sdgs = models.CharField(validators=[validate_comma_separated_integer_list],max_length=33)
-    sdg_strength = models.CharField(max_length=255)
+    sdg_strength = models.CharField(max_length=33)
     def __str__(self):   
         return self.name  
     
@@ -23,3 +24,4 @@ class SDG(models.Model):
     hex = models.CharField(max_length=10)
     def __str__(self):   
         return self.description  
+    
