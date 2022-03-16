@@ -107,10 +107,6 @@ for i in range(17):
             X_train2.append(line)
             y_train2.append(0)
 
-with open('randWiki.txt', 'r') as f:
-    for line in f:
-        line = re.sub('\s', ' ', line)
-        X_train2.append(line)
-        y_train2.append(1)
+
         
 baerBool = tfidfModel([X_train2, y_train2], X_testxTsdgPredictions = tfidfModel([Xtrain, yTrain], X_test)
