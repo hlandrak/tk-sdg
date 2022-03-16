@@ -20,7 +20,7 @@ def runUNScrape():
         driver.get(f"https://www.fn.no/{sdg}")
         soup = BS(driver.page_source, features="html.parser")
         paragraphs = soup.find_all("p")
-        f = open(f'sdgs/sdg{i}.txt', 'w')
+        f = open(f'sdgs/sdg{i}.txt', 'w', encoding="utf-8")
         for par in paragraphs:
             line = par.text.strip()
             line = line.replace('...', '')

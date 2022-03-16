@@ -35,9 +35,15 @@ def readTxtToTrainLists(fileName="randWiki"):
     """
     xTrain = []
     yTrain = []
-    with open(f'{fileName}.txt', 'r') as f:
+    with open(f'{fileName}.txt', 'r', encoding="utf-8") as f:
         for line in f:
             line = re.sub('\s', ' ', line)
             xTrain.append(line)
             yTrain.append(1)
-    return xTrain, yTrain
+    for i in range(17):
+        with open(f'sdgs/sdg{i+1}.txt', 'r', encoding="utf-8") as f:
+            for line in f:
+                line = re.sub('\s', ' ', line)
+                xTrain.append(line)
+                yTrain.append(0)
+    return [xTrain, yTrain]

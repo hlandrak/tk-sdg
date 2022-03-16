@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-from helperFunctions import pdfToText
-from predictingSDG import tfidfModel, createTrainingSdgInstance
+from helperFunctions import pdfToText, readTxtToTrainLists
+from predictingSDG import tfidfModel, createPipe, createTrainingSdgInstance
 
 def sdgList(predictions, threshold):
     sdgTrue = 17*[0]
@@ -30,5 +30,7 @@ def plotTestTextPredictions(testText, pipeBoolean, pipeIndividual):
         plt.xticks(sdgNames)
         plt.show()
 
-psykiskHelse = pdfToText("pdfs/psykiskhelseogrusplan.pdf", )
-plotTestTextPredictions([psykiskHelse])
+stratPlan = pdfToText("strategiplan-kultur-web.pdf")
+pipeBool = createPipe(readTxtToTrainLists())
+pipeInd = createPipe(createTrainingSdgInstance())
+plotTestTextPredictions([stratPlan], pipeBool, pipeInd)

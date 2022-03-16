@@ -57,12 +57,12 @@ def createTrainingSdgInstance():
     xTrain = []
     yTrain = []
     for i in range(17):
-        f = open(f'sdgs/sdg{i+1}.txt')
+        f = open(f'sdgs/sdg{i+1}.txt', encoding="utf-8")
         for line in f:
             line = re.sub('\s', ' ', line)
             xTrain.append(line)
             yTrain.append(i+1)
-    return xTrain, yTrain
+    return [xTrain, yTrain]
 
     
 from sklearn.linear_model import LogisticRegression
