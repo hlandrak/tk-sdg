@@ -23,3 +23,21 @@ def txtToStr(fileName):
         text += line
     text = re.sub('\s', ' ', text)
     return text
+
+def readTxtToTrainLists(fileName="randWiki"):
+    """Reads a .txt file and loads the information into training data lists. 
+
+    Args:
+        fileName (str, optional): name of .txt file containing the corpus. Defaults to "randWiki".
+
+    Returns:
+        _type_: xTrain, yTrain
+    """
+    xTrain = []
+    yTrain = []
+    with open(f'{fileName}.txt', 'r') as f:
+        for line in f:
+            line = re.sub('\s', ' ', line)
+            xTrain.append(line)
+            yTrain.append(1)
+    return xTrain, yTrain
