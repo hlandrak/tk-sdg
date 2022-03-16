@@ -12,7 +12,9 @@ stopWords = spacy.lang.nb.stop_words.STOP_WORDS
 def spacyTokenizer(sentence):
     """This function will accepts a sentence as input and processes the sentence into tokens, performing lemmatization, 
     lowercasing, removing stop words and punctuations.
-    sentence: the text string to be tokenized"""
+    
+    Args:
+        sentence (str, optional): the text string to be tokenized"""
     
     # Creating our token object which is used to create documents with linguistic annotations
     myTokens = nlp(sentence)
@@ -42,11 +44,10 @@ class predictors(TransformerMixin):
     def fit(self, X, y= None, **fit_params):
         return self
     
-    def get_params(self, deep= True):
+    def getParams(self, deep= True):
         return {}
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-tfidfVector = TfidfVectorizer(tokenizer=spacyTokenizer)
 
 def createTrainingSdgInstance():
     """Generates trainingdata
@@ -66,15 +67,6 @@ def createTrainingSdgInstance():
     
 from sklearn.linear_model import LogisticRegression
 
-classifier = LogisticRegression(multi_class='ovr', solver='liblinear')
-
-# Create pipeline using Tf-idf
-pipe = Pipeline ([("cleaner", predictors()),
-                 ("vectorizer", tfidfVector),
-                 ("classifier", classifier)])
-
-pipe.fit(createTrainingSdgInstance())
-
 def tfidfModel(trainingData, testData):
     """
     Return predicted probabilities for Pipeline (pipe).
@@ -84,7 +76,7 @@ def tfidfModel(trainingData, testData):
         testData: a list of strings to be predicted
     """
     pipe = Pipeline ([("cleaner", predictors()),
-                 ("vectorizer", tfidfVector),
+                 ("vectorizer", TfidfVectorizer(tokenizer=spacyTokenizer)),
                  ("classifier", LogisticRegression(multi_class='ovr', solver='liblinear'))])
 
     pipe.fit(trainingData[0], trainingData[1])
@@ -97,16 +89,3 @@ def sdgPredict(listOfStrings):
     listOfStrings: a list string objects which should be compared to the SDGs"""
     sdgPredictions = tfidfModel([createTrainingSdgInstance()], listOfStrings)
     return sdgPredictions
-        
-X_train2 = []
-y_train2 = []
-for i in range(17):
-    with open(f'sdgs/sdg{i+1}.txt', 'r') as f:
-        for line in f:
-            line = re.sub('\s', ' ', line)
-            X_train2.append(line)
-            y_train2.append(0)
-
-
-        
-baerBool = tfidfModel([X_train2, y_train2], X_testxTsdgPredictions = tfidfModel([Xtrain, yTrain], X_test)
