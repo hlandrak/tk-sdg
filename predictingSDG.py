@@ -67,20 +67,31 @@ def createTrainingSdgInstance():
     
 from sklearn.linear_model import LogisticRegression
 
-def tfidfModel(trainingData, testData):
-    """
-    Return predicted probabilities for Pipeline (pipe).
-    
+def createPipe(trainingData):
+    """creates a pipeline based on training data
+
     Args:
-        trainingData: xTrain and yTrain (output of createTrainingSdgInstance)
-        testData: a list of strings to be predicted
+        trainingData (lists): takes xTrain and yTrain
+
+    Returns:
+        pipe: pipeline
     """
     pipe = Pipeline ([("cleaner", predictors()),
                  ("vectorizer", TfidfVectorizer(tokenizer=spacyTokenizer)),
                  ("classifier", LogisticRegression(multi_class='ovr', solver='liblinear'))])
-
     pipe.fit(trainingData[0], trainingData[1])
+    return pipe
 
+def tfidfModel(testData, pipe):
+    """takes in training data and a pipeline
+
+    Args:
+        testData (list): Vector to be scored, where n_samples is the number of samples and n_features is the number of features.
+        pipe (_type_): a pipeline object to be tested against.
+
+    Returns:
+        predicted (float): the predicted similarity of the pipeline and the training data 
+    """
     predicted = pipe.predict_proba(testData)
     return predicted
 
