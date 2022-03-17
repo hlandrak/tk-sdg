@@ -57,7 +57,7 @@ def createTrainingSdgInstance():
     xTrain = []
     yTrain = []
     for i in range(17):
-        f = open(f'sdgs/sdg{i+1}.txt', encoding="utf-8")
+        f = open(f'sdgs/sdg{i+1}.txt', encoding="utf8")
         for line in f:
             line = re.sub('\s', ' ', line)
             xTrain.append(line)
