@@ -3,20 +3,30 @@ import re
 from spacy.lang.nb import Norwegian
 import spacy
 import helperFunctions
+import glob
+from sklearn.base import TransformerMixin
+from sklearn.pipeline import Pipeline
+import string
+from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
+
+    
+from sklearn.linear_model import LogisticRegression
+import pickle
 
 # for documentation see: https://www.kaggle.com/satishgunjal/tutorial-text-classification-using-spacy
-import string
-nlp = spacy.load("nb_core_news_lg")
-parser = Norwegian()
-punctuations = string.punctuation
-stopWords = spacy.lang.nb.stop_words.STOP_WORDS
+
+
 def spacyTokenizer(sentence):
     """This function will accepts a sentence as input and processes the sentence into tokens, performing lemmatization, 
     lowercasing, removing stop words and punctuations.
     
     Args:
         sentence (str, optional): the text string to be tokenized"""
-    
+    nlp = spacy.load("nb_core_news_lg")
+    parser = Norwegian()
+    punctuations = string.punctuation
+    stopWords = spacy.lang.nb.stop_words.STOP_WORDS
     # Creating our token object which is used to create documents with linguistic annotations
     myTokens = nlp(sentence)
     
@@ -34,9 +44,6 @@ def cleanText(text):
     """Removing spaces and converting the text into lowercase"""
     return text.strip().lower()
 
-from sklearn.base import TransformerMixin
-from sklearn.pipeline import Pipeline
-
 class predictors(TransformerMixin):
     def transform(self, X, **transform_params):
         """Override the transform method to clean text"""
@@ -48,13 +55,10 @@ class predictors(TransformerMixin):
     def getParams(self, deep= True):
         return {}
 
-from sklearn.feature_extraction.text import TfidfVectorizer
 
-    
-from sklearn.linear_model import LogisticRegression
 
 def createPipe(trainingData):
-    """creates a pipeline based on training data
+    """Creates a pipeline based on training data
 
     Args:
         trainingData (lists): takes xTrain and yTrain
@@ -81,9 +85,10 @@ def tfidfModel(testData, pipe):
     predicted = pipe.predict_proba(testData)
     return predicted
 
-import pickle
 
 def savePipes():
+    """Save pipes as .pkl.
+    """
     pipeIndividual = createPipe(helperFunctions.createTrainingSdgInstance())
     pipeBoolean = createPipe(helperFunctions.createTrainingSdgBoolean())
     pickle.dump(pipeBoolean, open("pipelineBoolean.pkl", "wb"))
@@ -91,8 +96,16 @@ def savePipes():
 
 
 def sdgPredict(listOfStrings, threshold = 0.75):
-    """Create a prediction of similarity for a list of strings
-    listOfStrings: a list string objects which should be compared to the SDGs"""
+    """Create a prediction per sdg for a list of strings. Loads pipelines from file and gives 2 predictions
+    based on (1) Each SDG, (2) SDG or not. Multiplies these togheter and adjusts for num of SDG.
+
+    Args:
+        listOfStrings (list of str): List of str objects which should be compared to the SDGs
+        threshold (float, optional): Threshold for cut off for when sdg-value is relevant. Defaults to 0.75.
+
+    Returns:
+        mult (list of list of float): Float value for each SDG per page of probabilities combined for each SDG.
+    """
     pipeIndividual = pickle.load(open("pipelineIndividual.pkl", "rb"))
     pipeBoolean = pickle.load(open("pipelineBoolean.pkl", "rb"))
     sdgPredictions = tfidfModel(listOfStrings, pipeIndividual)
@@ -112,21 +125,25 @@ def sdgPredict(listOfStrings, threshold = 0.75):
 
     return mult
 
-import numpy as np
-
-def transposePagesToSdgs(pages):
-    return np.transpose(np.array(pages))
 
 def predictAllAndSave(pagesString, name):
+    """Saves and returns SDG prediction data per page in given list of pages.
+
+    Args:
+        pagesString (list of str): text per page in str format as list.
+        name (str): name of file.
+
+    Returns:
+        data (dict): Data saved to json file. {name (str), predicion data (list of list of float)}
+    """
     data = helperFunctions.predictionsToJSON(
-        sdgPredict([pagesString[-1]])[0], 
         name,
-        transposePagesToSdgs(sdgPredict(pagesString[0:-1])))
+        helperFunctions.transpose2DList(sdgPredict(pagesString)))
     return data
 
-import glob
 
 def textScrapeAllPdfs():
+
     allPdfs = glob.glob("pdfs/*.pdf")
     allTxt = glob.glob("txt/*.txt")
     for pdf in allPdfs:

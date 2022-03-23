@@ -1,6 +1,7 @@
 import re
 import pdfplumber
 import json
+import numpy as np
 
 def pdfToText(fileName):
     """Generate strings from PDF file
@@ -30,8 +31,18 @@ def pdfToTextPages(fileName, name):
     with open(f"txt/{name}.txt", "w") as f:
         for page in textList:
             f.write(f"{page}\n")
-        f.writelines(textList)
     return textList
+
+def transpose2DList(pages):
+    """_summary_
+
+    Args:
+        pages (): _description_
+
+    Returns:
+        pages: _description_
+    """
+    return np.transpose(np.array(pages))
 
 def txtToStr(fileName):
     """Produce string from file
@@ -100,16 +111,21 @@ def listToSting(list):
         string += f"{round(ele, 2)},"
     return string[0:-1]
 
-def predictionsToJSON(predictions, name, pagePredictions, url="https://www.google.com"):
+def predictionsToJSON(name, pagePredictions, url="https://www.google.com"):
     boolPred = [0]*17
     for i in range(len(boolPred)):
         if any(pagePredictions[i] == 1):
             boolPred[i] = 1
+    try:
+        with open(f"urls/{name}.txt", "r") as f:
+            url = f.readline()
+    except:
+        pass
+    
     data = {
         "name" : name,
         "url" : url,
         "sdgs" : listToSting(boolPred),
-        "sdg_strength" : listToSting(predictions),
     }
 
     for i in range(len(pagePredictions)):
@@ -122,12 +138,37 @@ def predictionsToJSON(predictions, name, pagePredictions, url="https://www.googl
     
     return data
 
+import os
+import requests
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
+
+def pdfScraping():
+
+    url = "https://www.trondheim.kommune.no/alleplaner/"
+
+    #If there is no such folder, the script will create one automatically
+    folder_location = r'pdfs/'
+    if not os.path.exists(folder_location):os.mkdir(folder_location)
+
+    response = requests.get(url)
+    soup= BeautifulSoup(response.text, "html.parser")
+        
+    for link in soup.select("a[href$='.pdf']"):
+        #Name the pdf files using the last portion of each link which are unique in this case
+        filename = os.path.join(folder_location,link['href'].split('/')[-1])
+        with open(filename, 'wb') as f:
+            f.write(requests.get(urljoin(url,link['href'])).content)
+        filenameBase = link['href']
+        filename2 = link['href'].split('/')[-1]
+        filenameNoPdf = re.sub(".pdf", "", filename2) 
+        with open(f"urls/{filenameNoPdf}.txt", "w") as f:
+            f.write(f"https://www.trondheim.kommune.no{filenameBase}")
 
 
 
 def main():
-    pdfToTextPages("pdfs/psykiskhelseogrusplan.pdf", "psykisk")
-    print(txtToStr("txt/psykisk.txt"))
+    pdfScraping()
 
 if __name__ == "__main__":
     main()
