@@ -1,3 +1,4 @@
+from audioop import mul
 import re
 from spacy.lang.nb import Norwegian
 import spacy
@@ -21,7 +22,7 @@ def spacyTokenizer(sentence):
     
     # lemmatizing each token and converting each token in lower case
     # Note that spaCy uses '-PRON-' as lemma for all personal pronouns like me, I etc
-    myTokens = [ word.lemma_.lower().strip() if word.lemma_ != "-PRON-" else word.lower_ for word in myTokens ]
+    myTokens = [ word.lemma_.lower().strip() if (word.lemma_ != "-PRON-" and not word.like_num) else word.lower_ for word in myTokens ]
     
     # Removing stop words
     myTokens = [ word for word in myTokens if word not in stopWords and word not in punctuations]
@@ -80,25 +81,75 @@ def tfidfModel(testData, pipe):
     predicted = pipe.predict_proba(testData)
     return predicted
 
-pipeIndividual = createPipe(helperFunctions.createTrainingSdgInstance())
-pipeBoolean = createPipe(helperFunctions.createTrainingSdgBoolean())
+import pickle
+
+def savePipes():
+    pipeIndividual = createPipe(helperFunctions.createTrainingSdgInstance())
+    pipeBoolean = createPipe(helperFunctions.createTrainingSdgBoolean())
+    pickle.dump(pipeBoolean, open("pipelineBoolean.pkl", "wb"))
+    pickle.dump(pipeIndividual, open("pipelineIndividual.pkl", "wb"))
 
 
-def sdgPredict(listOfStrings):
+def sdgPredict(listOfStrings, threshold = 0.75):
     """Create a prediction of similarity for a list of strings
     listOfStrings: a list string objects which should be compared to the SDGs"""
+    pipeIndividual = pickle.load(open("pipelineIndividual.pkl", "rb"))
+    pipeBoolean = pickle.load(open("pipelineBoolean.pkl", "rb"))
     sdgPredictions = tfidfModel(listOfStrings, pipeIndividual)
     barekraftBool = tfidfModel(listOfStrings, pipeBoolean)
+
 
     mult = sdgPredictions * 17
     for i in range(len(mult)):
         mult[i] *= barekraftBool[i][0]
+        for j in range(len(mult[i])):
+            if mult[i][j] > 1:
+                mult[i][j] = 1
+            elif mult[i][j] - threshold > 0:
+                mult[i][j] = (mult[i][j] - threshold) / (1 - threshold)
+            else:
+                mult[i][j] = 0
 
     return mult
 
+import numpy as np
+
+def transposePagesToSdgs(pages):
+    return np.transpose(np.array(pages))
+
+def predictAllAndSave(pagesString, name):
+    data = helperFunctions.predictionsToJSON(
+        sdgPredict([pagesString[-1]])[0], 
+        name,
+        transposePagesToSdgs(sdgPredict(pagesString[0:-1])))
+    return data
+
+import glob
+
+def textScrapeAllPdfs():
+    allPdfs = glob.glob("pdfs/*.pdf")
+    allTxt = glob.glob("txt/*.txt")
+    for pdf in allPdfs:
+        name = re.sub("pdfs/", "", pdf)
+        name = re.sub(".pdf", "", name)
+        if not f"txt/{name}.txt" in allTxt:
+            print(f"Converting {name}")
+            helperFunctions.pdfToTextPages(pdf, name)
+
+def saveAllTxtResultsJson():
+    allTxt = glob.glob("txt/*.txt")
+    allJson = glob.glob("jsons/*.json")
+    for textFile in allTxt:
+        name = re.sub("txt/", "", textFile)
+        name = re.sub(".txt", "", name)
+        if not f"jsons/{name}.json" in allJson:
+            print(f"Predicting {name}")
+            predictAllAndSave(helperFunctions.txtToStr(textFile), name)
 
 def main():
-    print(sdgPredict(["Klima e bæsj"]))
+    textScrapeAllPdfs()
+    saveAllTxtResultsJson()
+
 
 if __name__ == "__main__":
     main()

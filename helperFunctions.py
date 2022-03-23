@@ -1,5 +1,6 @@
 import re
 import pdfplumber
+import json
 
 def pdfToText(fileName):
     """Generate strings from PDF file
@@ -13,17 +14,35 @@ def pdfToText(fileName):
     # print allText)
     return  allText
 
+def pdfToTextPages(fileName, name):
+    """
+    Create list of strings from pdf. Each string is the text on 1 page in the pdf. Return list.
+    """
+    textList = []
+    with pdfplumber.open(fileName) as pdf:
+        for page in pdf.pages:
+            textPage = page.extract_text()
+            textPage = re.sub('\s', ' ', textPage)
+            textList.append(textPage)
+    # TODO implement saving of list of str to .txt and function for loading .txt to list of str
+    
+    # print(all_text)
+    with open(f"txt/{name}.txt", "w") as f:
+        for page in textList:
+            f.write(f"{page}\n")
+        f.writelines(textList)
+    return textList
+
 def txtToStr(fileName):
     """Produce string from file
     fileName: name of .txt document"""
     f = open(fileName, 'r')
     textLines = f.readlines()
-    text = ""
+    text = []
     for line in textLines:
-        text += line
-    text = re.sub('\s', ' ', text)
+        line = re.sub('\s', ' ', line)
+        text.append(line)
     return text
-
 
 def createTrainingSdgInstance():
     """Generates trainingdata
@@ -74,3 +93,41 @@ def createTrainingSdgBoolean():
                 xTrain.append(line)
                 yTrain.append(0)
     return [xTrain, yTrain]
+
+def listToSting(list):
+    string = ""
+    for ele in list:
+        string += f"{round(ele, 2)},"
+    return string[0:-1]
+
+def predictionsToJSON(predictions, name, pagePredictions, url="https://www.google.com"):
+    boolPred = [0]*17
+    for i in range(len(boolPred)):
+        if any(pagePredictions[i] == 1):
+            boolPred[i] = 1
+    data = {
+        "name" : name,
+        "url" : url,
+        "sdgs" : listToSting(boolPred),
+        "sdg_strength" : listToSting(predictions),
+    }
+
+    for i in range(len(pagePredictions)):
+        data[f"SDG{i+1}"] = listToSting(pagePredictions[i])
+
+    jsonString = json.dumps(data)
+
+    with open(f"jsons/{name}.json", "w") as outfile:
+        outfile.write(jsonString)
+    
+    return data
+
+
+
+
+def main():
+    pdfToTextPages("pdfs/psykiskhelseogrusplan.pdf", "psykisk")
+    print(txtToStr("txt/psykisk.txt"))
+
+if __name__ == "__main__":
+    main()
