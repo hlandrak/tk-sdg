@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 
 import './tableView.css';
 import { Modal, Button } from "react-bootstrap";
-//import { Pie, defaults } from 'react-chartjs-2'
-//import {Chart, ArcElement} from 'chart.js'
+import { Pie, defaults } from 'react-chartjs-2'
+import {Chart, ArcElement} from 'chart.js'
 
 //ENDRE TIL FUNCTION
 function TableView (props) {

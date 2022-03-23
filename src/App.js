@@ -8,7 +8,6 @@ import TableView from './pages/tableView';
 import FlowChart from './pages/flowChart';
 //import BubbleChart from './pages/bubbleChart';
 import BubbleChartComponent from './pages/bubbleChart';
-import { Navbar,NavItem, Nav } from 'react-bootstrap';
 
 
 function App () {
@@ -38,15 +37,13 @@ function App () {
       <div>
       <h2>Trondheim kommune SDG oversikt</h2>
         <Router>
-          <Navbar class="navbar navbar-expand-lg navbar-light bg-light">
-            <Navbar.Collapse>
-            <Nav class="mr-auto">
-              <NavItem><Link to='/'> Tabell</Link></NavItem>
-              <NavItem><Link to={'/bobble'} >Bobblediagram</Link></NavItem>
-              <NavItem><Link to={'/flyt'} >Flytdiagram</Link></NavItem>
-              </Nav>
-              </Navbar.Collapse>
-          </Navbar>
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <ul class="navbar-nav mr-auto">
+              <li class='nav-item'><Link to='/'> Tabell</Link></li>
+              <li class='nav-item'><Link to={'/bobble'} >Bobblediagram</Link></li>
+              <li class='nav-item'><Link to={'/flyt'} >Flytdiagram</Link></li>
+            </ul>
+          </nav>
           <Routes>
               <Route path='/' element={<TableView documents={documents} sdgs={sdgs}/>} />
               <Route path='/bobble' element={<BubbleChartComponent  documents={documents} sdgs={sdgs}/>} />
