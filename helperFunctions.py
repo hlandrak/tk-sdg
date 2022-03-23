@@ -58,7 +58,7 @@ def createTrainingSdgBoolean():
     yTrain = []
     stop = 0
     for filename in glob.glob(os.path.join(path, '*.txt')): # open all .txt files in "dev-kopi" folder.
-        with open(os.path.join(os.getcwd(), filename), 'r') as f:
+        with open(os.path.join(os.getcwd(), filename), 'r', encoding="utf8") as f:
             if stop < 10000: # stop at 10000 for testing purposes. 133000 lines in total, but takes very long to train.
                 for line in f:
                     line = re.sub('\s', ' ', line)
@@ -68,7 +68,7 @@ def createTrainingSdgBoolean():
                         stop += 1
 
     for i in range(17):
-        with open(f'sdgs/sdg{i+1}.txt', 'r') as f:
+        with open(f'sdgs/sdg{i+1}.txt', 'r', encoding="utf8") as f:
             for line in f:
                 line = re.sub('\s', ' ', line)
                 xTrain.append(line)
