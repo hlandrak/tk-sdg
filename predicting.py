@@ -151,8 +151,9 @@ def textScrapeAllPdfs():
     allPdfs = glob.glob("pdfs/*.pdf")
     allTxt = glob.glob("txt/*.txt")
     for pdf in allPdfs:
-        name = re.sub("pdfs/", "", pdf)
-        name = re.sub(".pdf", "", name)
+        name = re.sub(".pdf", "", pdf)
+        name = re.sub("pdfs", "", name)
+        name = name[1:]
         if not f"txt/{name}.txt" in allTxt:
             print(f"Converting {name}")
             helperFunctions.pdfToTextPages(pdf, name)
@@ -161,8 +162,10 @@ def saveAllTxtResultsJson():
     allTxt = glob.glob("txt/*.txt")
     allJson = glob.glob("jsons/*.json")
     for textFile in allTxt:
-        name = re.sub("txt/", "", textFile)
-        name = re.sub(".txt", "", name)
+        name = re.sub(".txt", "", textFile)
+        name = re.sub("txt", "", name)
+        name = name[1:]
+        print(name)
         if not f"jsons/{name}.json" in allJson:
             print(f"Predicting {name}")
             predictAllAndSave(helperFunctions.txtToStr(textFile), name)
