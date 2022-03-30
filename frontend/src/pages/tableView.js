@@ -1,17 +1,22 @@
 import React, {useEffect, useState} from 'react';
 
-import './tableView.css';
-import { Modal, Button } from "react-bootstrap";
-//import { Pie, defaults } from 'react-chartjs-2'
-//import {Chart, ArcElement} from 'chart.js'
 
-//ENDRE TIL FUNCTION
+import SdgPerPage from '../components/sdgPerPage';
+
+import './tableView.css';
+import { Modal, Button, ButtonGroup, ToggleButton } from "react-bootstrap";
+import { Bar } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
+
+
 function TableView (props) {
     const [name,setName] = useState(0);
 
     const [sdgStrength,setSdgStrength] = useState(0);
 
-    const [sdg1,setSdg1] = useState(1);
+    const [sdg1,setSdg1] = useState(0);
     const [sdg2,setSdg2] = useState(0);
     const [sdg3,setSdg3] = useState(0);
     const [sdg4,setSdg4] = useState(0);
@@ -28,13 +33,29 @@ function TableView (props) {
     const [sdg15,setSdg15] = useState(0);
     const [sdg16,setSdg16] = useState(0);
     const [sdg17,setSdg17] = useState(0);
-    
+    const [barData,setBarData] = useState(0);
+    const [documentSdgData,setDocuments] = useState([1,1,1,1]);
+
+
     const[showModal,setShowModal] = useState(false);
+    const[showModalHelp,setShowModalHelp] = useState(false);
+
+    useEffect(()=>{
+        setBarData({labels:['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'],
+                datasets:[
+                    {data: sdgStrength,
+                    backgroundColor: colors
+                    }
+                ]})
+        setShowModal(showModalHelp);
+    },[showModalHelp]);    
     
     const rowEvent = (document)=> {
         console.log(document.name);
         setName(document.name);
-        setSdgStrength(document.sdg_strenght);
+        setSdgStrength(document.sdg_strength.split(','));
+        setDocuments([document.sdg1,document.sdg2,document.sdg3,document.sdg4,document.sdg5,document.sdg6,document.sdg7,document.sdg8,
+            document.sdg9,document.sdg10,document.sdg11,document.sdg12,document.sdg13,document.sdg14,document.sdg15,document.sdg16,document.sdg17]);
         setSdg1(document.sdg1);
         setSdg2(document.sdg2);
         setSdg3(document.sdg3);
@@ -52,15 +73,21 @@ function TableView (props) {
         setSdg15(document.sdg15);
         setSdg16(document.sdg16);
         setSdg17(document.sdg17);
-        setShowModal(true);
+        console.log(sdgStrength);
+        setShowModalHelp(true);
         console.log(showModal);
     }
 
- 
+
+   
+    const [checked,setChecked] = useState(true)
     const colors = props.sdgs.map(e => e.hex);
+    
+
+
     return(
     <div>
-        <p>Table view blir lagd</p>
+        <p>Table radio blir lagd</p>
         <table className="table table-bordered">
             <thead>
                 <tr>
@@ -73,7 +100,7 @@ function TableView (props) {
             <tbody>
                 {props.documents.map((document)=>(
                     <tr key={document.id} onClick={()=>rowEvent(document)}>
-                        <td  >{document.name} </td>
+                        <td className="column2" >{document.name} </td>
                         <td className="column" style={{backgroundColor: document.sdgs.split(",")[0] == 1 ? colors[0] : "#FFFFFF"}}></td>
                         <td className="column" style={{backgroundColor: document.sdgs.split(",")[1] == 1 ? colors[1] : "#FFFFFF"}}></td>
                         <td className="column" style={{backgroundColor: document.sdgs.split(",")[2] == 1 ? colors[2] : "#FFFFFF"}}></td>
@@ -97,16 +124,52 @@ function TableView (props) {
         
         {showModal ?
         <div> 
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal show={showModal} onHide={() => setShowModalHelp(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>{name}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body>
+                    <>
+                    <ButtonGroup className="mb-2">
+                        
+                        <ToggleButton
+                            id='toggle-check'
+                            type='checkbox'
+                            variant={checked ? 'secondary' :'primary'}
+                            checked={checked}
+                            value="1"
+                            onChange={(e) =>setChecked(e.currentTarget.checked)}
+                        >
+                        {checked ? 'View 1':'View 2'}
+                        </ToggleButton>
+                        
+                    </ButtonGroup>
+                    </>
+                    {checked ? 
+                    <Bar 
+                        data={barData}
+                        options={{
+                            title:{
+                              display:true,
+                              text:'SDG styrke for dokument per sdg',
+                              fontSize:20
+                            },
+                            legend:{
+                                display:false
+                              }
+                        }}
+                    /> : 
+                   <SdgPerPage
+                        colors={colors}
+                        documentSdgData={documentSdgData}
+                   />
+                    }   
+                </Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                <Button variant="secondary" onClick={() => setShowModalHelp(false)}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={() => setShowModal(false)}>
+                <Button variant="primary" onClick={() => setShowModalHelp(false)}>
                     Save Changes
                 </Button>
                 </Modal.Footer>
@@ -116,9 +179,6 @@ function TableView (props) {
     </div>
     )
 }
-
-
-
 
 
     

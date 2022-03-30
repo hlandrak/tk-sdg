@@ -1,9 +1,12 @@
 .column {
-    width: 3%;
+    width: 2%;
 }
-
+.column2{
+    width:10%
+}
 .table {
-    width: 75%;
+    width: 60%;
     margin-left:auto; 
     margin-right:auto;
+    margin-top:100px;
 }

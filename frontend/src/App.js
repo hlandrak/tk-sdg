@@ -6,15 +6,20 @@ import axios from 'axios';
 
 import TableView from './pages/tableView';
 import FlowChart from './pages/flowChart';
-//import BubbleChart from './pages/bubbleChart';
 import BubbleChartComponent from './pages/bubbleChart';
-import { Navbar,NavItem, Nav } from 'react-bootstrap';
+
+import Navigatiom from './components/navigation';
+
+import { Navbar, Nav, Container } from 'react-bootstrap';
+
 
 
 function App () {
   const [documents, setDocuments] = useState([]);
   const [sdgs, setSdgs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sankeyData, setSankeyData] = useState([['From','To','Weight']]);
+
 
   useEffect (() => {
       
@@ -27,32 +32,37 @@ function App () {
       });
       axios.get("http://localhost:8000/api/sdgs/").then((res)=>setSdgs(res.data)).catch((err)=>console.log(err));
       setLoading(false);
-      console.log(documents);
   },[]);
 
+  useEffect (() => {
+    documents.map((document) => document.sdg_strength.split(',').map((sdg,ind) => setSankeyData(old => [...old,[document.name,ind.toString(),parseFloat(sdg)]])));
+  },[documents]);
 
-  console.log(documents);
 
-      
+  //console.log(sankeyData);
+  
+
   return(
       <div>
-      <h2>Trondheim kommune SDG oversikt</h2>
-        <Router>
-          <Navbar class="navbar navbar-expand-lg navbar-light bg-light">
-            <Navbar.Collapse>
-            <Nav class="mr-auto">
-              <NavItem><Link to='/'> Tabell</Link></NavItem>
-              <NavItem><Link to={'/bobble'} >Bobblediagram</Link></NavItem>
-              <NavItem><Link to={'/flyt'} >Flytdiagram</Link></NavItem>
-              </Nav>
+          <Navbar collapseOnSelect fixed='top' expand='sm' bg='dark' variant='dark'>
+            <Container>
+              <Navbar.Toggle aria-controls='responsive-navbar-nav'/>
+              <Navbar.Collapse id='responsive-navbar-nav'>
+                <Nav className="mr-auto">
+                  <Nav.Link href='/'> Tabell</Nav.Link>
+                  <Nav.Link href={'/bobble'} >Bobblediagram</Nav.Link>
+                  <Nav.Link href={'/flyt'} >Flytdiagram</Nav.Link>
+                </Nav>
               </Navbar.Collapse>
+            </Container>
           </Navbar>
+        <Router>
           <Routes>
               <Route path='/' element={<TableView documents={documents} sdgs={sdgs}/>} />
               <Route path='/bobble' element={<BubbleChartComponent  documents={documents} sdgs={sdgs}/>} />
-              <Route path='/flyt' element={<FlowChart />} />
+              <Route path='/flyt' element={<FlowChart sankeyData={sankeyData} sdgs={sdgs}/>} />
           </Routes>
-      </Router>
+        </Router>
       </div>
     )
 }
