@@ -172,6 +172,7 @@ def combineJsons():
     for filename in glob.glob(os.path.join(path, '*.json')): # open all .txt files in "dev-kopi" folder.
         with open(os.path.join(os.getcwd(), filename), 'r', encoding="utf8") as f:
             data = json.load(f)
+            data =  {k.lower(): v for k, v in data.items()}
             data['id'] = idcount
             idcount += 1
             allData.append(data)
