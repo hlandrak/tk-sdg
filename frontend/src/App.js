@@ -19,6 +19,7 @@ function App () {
   const [sdgs, setSdgs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sankeyData, setSankeyData] = useState([['From','To','Weight']]);
+  const [sdgCount,setSdgCount] = useState([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
 
 
   useEffect (() => {
@@ -36,11 +37,24 @@ function App () {
 
   useEffect (() => {
     documents.map((document) => document.sdg_strength.split(',').map((sdg,ind) => setSankeyData(old => [...old,[document.name,ind.toString(),parseFloat(sdg)]])));
+    countSDGs();
+    
   },[documents]);
 
+  const countSDGs = () => {
+    let count = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    documents.map(element => {
+        let arr = element.sdgs.split(",");
+        
+        for (let i =0 ; i < arr.length; i++){
+            count[i] += parseFloat(arr[i]);
+        }
+    });
 
-  //console.log(sankeyData);
-  
+    setSdgCount(count);
+}
+
+  console.log(sdgCount);
 
   return(
       <div>
@@ -50,7 +64,6 @@ function App () {
               <Navbar.Collapse id='responsive-navbar-nav'>
                 <Nav className="mr-auto">
                   <Nav.Link href='/'> Tabell</Nav.Link>
-                  <Nav.Link href={'/bobble'} >Bobblediagram</Nav.Link>
                   <Nav.Link href={'/flyt'} >Flytdiagram</Nav.Link>
                 </Nav>
               </Navbar.Collapse>
@@ -59,7 +72,6 @@ function App () {
         <Router>
           <Routes>
               <Route path='/' element={<TableView documents={documents} sdgs={sdgs}/>} />
-              <Route path='/bobble' element={<BubbleChartComponent  documents={documents} sdgs={sdgs}/>} />
               <Route path='/flyt' element={<FlowChart sankeyData={sankeyData} sdgs={sdgs}/>} />
           </Routes>
         </Router>
