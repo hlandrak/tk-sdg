@@ -13,6 +13,7 @@ Chart.register(...registerables);
 
 function TableView (props) {
     const [name,setName] = useState(0);
+    const[url,setUrl] = useState(0);
 
     const [sdgStrength,setSdgStrength] = useState(0);
 
@@ -51,8 +52,12 @@ function TableView (props) {
     },[showModalHelp]);    
     
     const rowEvent = (document)=> {
+        /*
+        Setting sdg counts, and urls and for the construction for the bar charts for each sdg in the modal
+        */
         console.log(document.name);
         setName(document.name);
+        setUrl(document.url);
         setSdgStrength(document.sdg_strength.split(','));
         setDocuments([document.sdg1,document.sdg2,document.sdg3,document.sdg4,document.sdg5,document.sdg6,document.sdg7,document.sdg8,
             document.sdg9,document.sdg10,document.sdg11,document.sdg12,document.sdg13,document.sdg14,document.sdg15,document.sdg16,document.sdg17]);
@@ -73,9 +78,8 @@ function TableView (props) {
         setSdg15(document.sdg15);
         setSdg16(document.sdg16);
         setSdg17(document.sdg17);
-        console.log(sdgStrength);
         setShowModalHelp(true);
-        console.log(showModal);
+ 
     }
 
 
@@ -163,14 +167,12 @@ function TableView (props) {
                         colors={colors}
                         documentSdgData={documentSdgData}
                    />
-                    }   
+                    }
+                    <a href={url}>{url}</a>   
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowModalHelp(false)}>
                     Close
-                </Button>
-                <Button variant="primary" onClick={() => setShowModalHelp(false)}>
-                    Save Changes
                 </Button>
                 </Modal.Footer>
             </Modal>

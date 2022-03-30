@@ -6,12 +6,13 @@ Chart.register(...registerables);
 
 
 const SdgPerPage=(props) => {
+    props.documentSdgData.map((e,idx)=> console.log(idx));
         return(
             <>            
             {props.documentSdgData.map((e,idx) => (
                 <Bar
                     key={'Bar-$'+idx}
-                    data={{labels:[e.split(',').length],
+                    data={{labels:[...Array(e.split(',').length).keys()],
                             datasets:[
                                 {data: e.split(','),
                                 backgroundColor: props.colors[idx],
@@ -25,7 +26,15 @@ const SdgPerPage=(props) => {
                         legend:{
                             display:true,
                             position:'right'
-                          }
+                          },
+                          scales: {
+                            y:
+                              {
+                                min: 0,
+                                max: 1,
+                                stepSize: 0.1,
+                              },
+                        }
                     }}
                 />
             ))}

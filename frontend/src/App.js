@@ -6,9 +6,8 @@ import axios from 'axios';
 
 import TableView from './pages/tableView';
 import FlowChart from './pages/flowChart';
-import BubbleChartComponent from './pages/bubbleChart';
+import Home from './pages/home';
 
-import Navigatiom from './components/navigation';
 
 import { Navbar, Nav, Container } from 'react-bootstrap';
 
@@ -23,7 +22,9 @@ function App () {
 
 
   useEffect (() => {
-      
+      /*
+      fetching data from bakcend with axios
+      */
       axios
       .get("http://localhost:8000/api/documents/")
       .then(function (response){ 
@@ -36,26 +37,16 @@ function App () {
   },[]);
 
   useEffect (() => {
+    /*
+    waiting for the fetching of data from backend before making the data structure for the sankey chart
+    */
     documents.map((document) => document.sdg_strength.split(',').map((sdg,ind) => setSankeyData(old => [...old,[document.name,ind.toString(),parseFloat(sdg)]])));
-    countSDGs();
-    
+
   },[documents]);
 
-  const countSDGs = () => {
-    let count = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    documents.map(element => {
-        let arr = element.sdgs.split(",");
-        
-        for (let i =0 ; i < arr.length; i++){
-            count[i] += parseFloat(arr[i]);
-        }
-    });
 
-    setSdgCount(count);
-}
 
-  console.log(sdgCount);
-
+  
   return(
       <div>
           <Navbar collapseOnSelect fixed='top' expand='sm' bg='dark' variant='dark'>
@@ -63,7 +54,8 @@ function App () {
               <Navbar.Toggle aria-controls='responsive-navbar-nav'/>
               <Navbar.Collapse id='responsive-navbar-nav'>
                 <Nav className="mr-auto">
-                  <Nav.Link href='/'> Tabell</Nav.Link>
+                  <Nav.Link href='/'> Hjem</Nav.Link>
+                  <Nav.Link href='/tabel'> Tabell</Nav.Link>
                   <Nav.Link href={'/flyt'} >Flytdiagram</Nav.Link>
                 </Nav>
               </Navbar.Collapse>
@@ -71,7 +63,8 @@ function App () {
           </Navbar>
         <Router>
           <Routes>
-              <Route path='/' element={<TableView documents={documents} sdgs={sdgs}/>} />
+              <Route path='/' element={<Home/>} />
+              <Route path='/tabel' element={<TableView documents={documents} sdgs={sdgs}/>} />
               <Route path='/flyt' element={<FlowChart sankeyData={sankeyData} sdgs={sdgs}/>} />
           </Routes>
         </Router>

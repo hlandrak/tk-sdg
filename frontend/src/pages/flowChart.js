@@ -4,9 +4,7 @@ import React, {useEffect, useState} from 'react';
 import './flowChart.css';
 
 function FlowChart(props) {
-  console.log("HER")
-  console.log(props.sankeyData);
-
+  
   return (
     
     <div className='main'>
