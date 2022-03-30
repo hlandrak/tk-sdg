@@ -106,9 +106,13 @@ def sdgPredict(listOfStrings, threshold = 0.75):
     Returns:
         mult (list of list of float): Float value for each SDG per page of probabilities combined for each SDG.
     """
+    print("Loading pipes")
     pipeIndividual = pickle.load(open("pipelineIndividual.pkl", "rb"))
     pipeBoolean = pickle.load(open("pipelineBoolean.pkl", "rb"))
+    print("Pipes loaded")
+    print("Pedicting per SDG")
     sdgPredictions = tfidfModel(listOfStrings, pipeIndividual)
+    print("Predicting yes/no")
     barekraftBool = tfidfModel(listOfStrings, pipeBoolean)
 
 
