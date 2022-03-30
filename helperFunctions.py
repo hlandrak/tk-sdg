@@ -175,6 +175,17 @@ def combineJsons():
             data =  {k.lower(): v for k, v in data.items()}
             data['id'] = idcount
             idcount += 1
+            
+            strengthList = []
+            for i in range(1,18):
+                one = data.get(f'sdg{i}').split(",")
+                newEle = []
+                for ele in one:
+                    newEle.append(float(ele))
+                strengthList.append( sum(newEle) / len(newEle) )
+            data['sdg_strength'] = listToSting(strengthList)
+                
+            
             allData.append(data)
 
     jsonString = json.dumps(allData)
