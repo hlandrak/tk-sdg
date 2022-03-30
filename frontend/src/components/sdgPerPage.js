@@ -16,7 +16,7 @@ const SdgPerPage=(props) => {
                             datasets:[
                                 {data: e.split(','),
                                 backgroundColor: props.colors[idx],
-                                label: idx+1
+                                label: props.sdgNames[idx]
                             }
                     ]}}
                     options={{

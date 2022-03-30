@@ -86,12 +86,12 @@ function TableView (props) {
    
     const [checked,setChecked] = useState(true)
     const colors = props.sdgs.map(e => e.hex);
-    
+    const sdgNames = props.sdgs.map(e => e.description);    
 
 
     return(
-    <div>
-        <p>Table radio blir lagd</p>
+    <div className='table'>
+     
         <table className="table table-bordered">
             <thead>
                 <tr>
@@ -160,19 +160,28 @@ function TableView (props) {
                             },
                             legend:{
                                 display:false
-                              }
+                              },
+                              scales: {
+                                y:
+                                  {
+                                    min: 0,
+                                    max: 1,
+                                    stepSize: 0.1,
+                                  },
+                            }
                         }}
                     /> : 
                    <SdgPerPage
                         colors={colors}
                         documentSdgData={documentSdgData}
+                        sdgNames={sdgNames}
                    />
                     }
-                    <a href={url}>{url}</a>   
+                    <a href={url}>Link til dokumentet</a>   
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowModalHelp(false)}>
-                    Close
+                    Lukk
                 </Button>
                 </Modal.Footer>
             </Modal>
