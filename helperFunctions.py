@@ -58,7 +58,7 @@ def txtToStr(fileName):
 def createTrainingSdgInstance():
     """Generates trainingdata
     xTrain is the sentences from sdgs
-    yTrain is the SDG number which xTrain sentences is related to"""
+    yTrain is the SDG number which xTrain sentences are related to"""
     # Creating trainingdata for classifying SDGs
     xTrain = []
     yTrain = []
