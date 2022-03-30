@@ -3,6 +3,8 @@ import pdfplumber
 import json
 import numpy as np
 
+txtEncoding = 'utf8'
+
 def pdfToText(fileName):
     """Generate strings from PDF file
     fileName: name of the PDF file"""
@@ -28,7 +30,7 @@ def pdfToTextPages(fileName, name):
     # TODO implement saving of list of str to .txt and function for loading .txt to list of str
     
     # print(all_text)
-    with open(f"txt/{name}.txt", "w") as f:
+    with open(f"txt/{name}.txt", "w", encoding=txtEncoding) as f:
         for page in textList:
             f.write(f"{page}\n")
     return textList
@@ -47,7 +49,7 @@ def transpose2DList(pages):
 def txtToStr(fileName):
     """Produce string from file
     fileName: name of .txt document"""
-    f = open(fileName, 'r')
+    f = open(fileName, 'r', encoding=txtEncoding)
     textLines = f.readlines()
     text = []
     for line in textLines:
@@ -63,7 +65,7 @@ def createTrainingSdgInstance():
     xTrain = []
     yTrain = []
     for i in range(17):
-        f = open(f'sdgs/sdg{i+1}.txt', encoding="utf8")
+        f = open(f'sdgs/sdg{i+1}.txt', encoding=txtEncoding)
         for line in f:
             line = re.sub('\s', ' ', line)
             xTrain.append(line)
@@ -88,7 +90,7 @@ def createTrainingSdgBoolean():
     yTrain = []
     stop = 0
     for filename in glob.glob(os.path.join(path, '*.txt')): # open all .txt files in "dev-kopi" folder.
-        with open(os.path.join(os.getcwd(), filename), 'r', encoding="utf8") as f:
+        with open(os.path.join(os.getcwd(), filename), 'r', encoding=txtEncoding) as f:
             if stop < 10000: # stop at 10000 for testing purposes. 133000 lines in total, but takes very long to train.
                 for line in f:
                     line = re.sub('\s', ' ', line)
@@ -98,7 +100,7 @@ def createTrainingSdgBoolean():
                         stop += 1
 
     for i in range(17):
-        with open(f'sdgs/sdg{i+1}.txt', 'r', encoding="utf8") as f:
+        with open(f'sdgs/sdg{i+1}.txt', 'r', encoding=txtEncoding) as f:
             for line in f:
                 line = re.sub('\s', ' ', line)
                 xTrain.append(line)
@@ -117,7 +119,7 @@ def predictionsToJSON(name, pagePredictions, url="https://www.google.com"):
         if any(pagePredictions[i] == 1):
             boolPred[i] = 1
     try:
-        with open(f"urls/{name}.txt", "r") as f:
+        with open(f"urls/{name}.txt", "r", encoding=txtEncoding) as f:
             url = f.readline()
     except:
         pass
@@ -133,7 +135,7 @@ def predictionsToJSON(name, pagePredictions, url="https://www.google.com"):
 
     jsonString = json.dumps(data)
 
-    with open(f"jsons/{name}.json", "w") as outfile:
+    with open(f"jsons/{name}.json", "w", encoding=txtEncoding) as outfile:
         outfile.write(jsonString)
     
     return data
@@ -157,12 +159,12 @@ def pdfScraping():
     for link in soup.select("a[href$='.pdf']"):
         #Name the pdf files using the last portion of each link which are unique in this case
         filename = os.path.join(folder_location,link['href'].split('/')[-1])
-        with open(filename, 'wb') as f:
+        with open(filename, 'wb', encoding=txtEncoding) as f:
             f.write(requests.get(urljoin(url,link['href'])).content)
         filenameBase = link['href']
         filename2 = link['href'].split('/')[-1]
         filenameNoPdf = re.sub(".pdf", "", filename2) 
-        with open(f"urls/{filenameNoPdf}.txt", "w") as f:
+        with open(f"urls/{filenameNoPdf}.txt", "w", encoding=txtEncoding) as f:
             f.write(f"https://www.trondheim.kommune.no{filenameBase}")
 
 def combineJsons():
@@ -170,7 +172,7 @@ def combineJsons():
     idcount = 200
     allData = []
     for filename in glob.glob(os.path.join(path, '*.json')): # open all .txt files in "dev-kopi" folder.
-        with open(os.path.join(os.getcwd(), filename), 'r', encoding="utf8") as f:
+        with open(os.path.join(os.getcwd(), filename), 'r', encoding=txtEncoding) as f:
             data = json.load(f)
             data =  {k.lower(): v for k, v in data.items()}
             data['id'] = idcount
@@ -189,7 +191,7 @@ def combineJsons():
             allData.append(data)
 
     jsonString = json.dumps(allData)
-    with open(f"allJsons.json", "w") as outfile:
+    with open(f"allJsons.json", "w", encoding=txtEncoding) as outfile:
         outfile.write(jsonString)
 
 
