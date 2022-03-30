@@ -106,10 +106,8 @@ def sdgPredict(listOfStrings, threshold = 0.75):
     Returns:
         mult (list of list of float): Float value for each SDG per page of probabilities combined for each SDG.
     """
-    print("Loading pipes")
     pipeIndividual = pickle.load(open("pipelineIndividual.pkl", "rb"))
     pipeBoolean = pickle.load(open("pipelineBoolean.pkl", "rb"))
-    print("Pipes loaded")
     print("Pedicting per SDG")
     sdgPredictions = tfidfModel(listOfStrings, pipeIndividual)
     print("Predicting yes/no")
@@ -147,6 +145,8 @@ def predictAllAndSave(pagesString, name):
 
 
 def textScrapeAllPdfs():
+    """Generate .txt files for all pdfs in pdfs folder.
+    """
 
     allPdfs = glob.glob("pdfs/*.pdf")
     allTxt = glob.glob("txt/*.txt")
@@ -159,13 +159,14 @@ def textScrapeAllPdfs():
             helperFunctions.pdfToTextPages(pdf, name)
 
 def saveAllTxtResultsJson():
+    """Predict all files in /txt folder and save to jsons
+    """
     allTxt = glob.glob("txt/*.txt")
     allJson = glob.glob("jsons/*.json")
     for textFile in allTxt:
         name = re.sub(".txt", "", textFile)
         name = re.sub("txt", "", name)
         name = name[1:]
-        print(name)
         if not f"jsons/{name}.json" in allJson:
             print(f"Predicting {name}")
             predictAllAndSave(helperFunctions.txtToStr(textFile), name)

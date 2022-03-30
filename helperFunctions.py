@@ -2,24 +2,23 @@ import re
 import pdfplumber
 import json
 import numpy as np
+import os
+import requests
+from urllib.parse import urljoin
+from bs4 import BeautifulSoup
+import glob
 
-txtEncoding = 'utf8'
-
-def pdfToText(fileName):
-    """Generate strings from PDF file
-    fileName: name of the PDF file"""
-    allText = ""
-    with pdfplumber.open(fileName) as pdf:
-        for page in pdf.pages:
-            allText += page.extract_text()
-    # print allText)
-    allText = re.sub('\s', ' ', allText)
-    # print allText)
-    return  allText
+txtEncoding = 'utf8' # universal txtencoding for reading files
 
 def pdfToTextPages(fileName, name):
-    """
-    Create list of strings from pdf. Each string is the text on 1 page in the pdf. Return list.
+    """Create list of strings from pdf. Each string is the text on 1 page in the pdf. Return list.
+
+    Args:
+        fileName (str): file location
+        name (str): name og file
+
+    Returns:
+        textList: list of strings
     """
     textList = []
     with pdfplumber.open(fileName) as pdf:
@@ -27,28 +26,32 @@ def pdfToTextPages(fileName, name):
             textPage = page.extract_text()
             textPage = re.sub('\s', ' ', textPage)
             textList.append(textPage)
-    # TODO implement saving of list of str to .txt and function for loading .txt to list of str
     
-    # print(all_text)
     with open(f"txt/{name}.txt", "w", encoding=txtEncoding) as f:
         for page in textList:
             f.write(f"{page}\n")
     return textList
 
 def transpose2DList(pages):
-    """_summary_
+    """Transpose pages
 
     Args:
-        pages (): _description_
+        pages (list of [float]): _description_
 
     Returns:
-        pages: _description_
+        pages (list of [float]): _description_
     """
     return np.transpose(np.array(pages))
 
 def txtToStr(fileName):
-    """Produce string from file
-    fileName: name of .txt document"""
+    """Produce list of string from .txt-file.
+
+    Args:
+        fileName (str): name of .txt-file.
+
+    Returns:
+        [str]: list of strings per line in .txt-file
+    """
     f = open(fileName, 'r', encoding=txtEncoding)
     textLines = f.readlines()
     text = []
@@ -58,9 +61,11 @@ def txtToStr(fileName):
     return text
 
 def createTrainingSdgInstance():
-    """Generates trainingdata
-    xTrain is the sentences from sdgs
-    yTrain is the SDG number which xTrain sentences are related to"""
+    """Generates trainingdata for predicting individual sdgs.
+
+    Returns:
+        [xTrain, yTrain]: xTrain is the sentences from sdgs. yTrain is the SDG number which xTrain sentences are related to
+    """
     # Creating trainingdata for classifying SDGs
     xTrain = []
     yTrain = []
@@ -73,8 +78,6 @@ def createTrainingSdgInstance():
     return [xTrain, yTrain]
 
 
-import os
-import glob
 
 def createTrainingSdgBoolean():
     """Reads a .txt file and loads the information into training data lists. 
@@ -83,7 +86,7 @@ def createTrainingSdgBoolean():
         fileName (str, optional): name of .txt file containing the corpus. Defaults to "randWiki".
 
     Returns:
-        _type_: xTrain, yTrain
+        [xTrain, yTrain]: xTrain all text. yTrain 0 for sdg, 1 else.
     """
     path = 'dev-kopi/'
     xTrain = []
@@ -108,12 +111,30 @@ def createTrainingSdgBoolean():
     return [xTrain, yTrain]
 
 def listToSting(list):
+    """Generate a string to write to JSON file
+
+    Args:
+        list (float): list of floats to convert.
+
+    Returns:
+        string: floats rounded to 2 decimals seperated by, as a string.
+    """
     string = ""
     for ele in list:
         string += f"{round(ele, 2)},"
     return string[0:-1]
 
 def predictionsToJSON(name, pagePredictions, url="https://www.google.com"):
+    """Generate JSON dictionarie for predictions
+
+    Args:
+        name (str): Name of file
+        pagePredictions (17 list elements of [float]): Predictions per page
+        url (str, optional): Url to document at Trodheim Kommunes site. Defaults to "https://www.google.com".
+
+    Returns:
+        data (dict): the dictionary saved to json-file
+    """
     boolPred = [0]*17
     for i in range(len(boolPred)):
         if any(pagePredictions[i] == 1):
@@ -140,12 +161,11 @@ def predictionsToJSON(name, pagePredictions, url="https://www.google.com"):
     
     return data
 
-import os
-import requests
-from urllib.parse import urljoin
-from bs4 import BeautifulSoup
+
 
 def pdfScraping():
+    """Scrape all pdfs at Trondheim kommune's website.
+    """
 
     url = "https://www.trondheim.kommune.no/alleplaner/"
 
@@ -168,10 +188,12 @@ def pdfScraping():
             f.write(f"https://www.trondheim.kommune.no{filenameBase}")
 
 def combineJsons():
+    """Combine the JSONs in /jsons to allJsons.json file. Adds 'id' and 'sdg_strength'.
+    """
     path = "jsons/"
     idcount = 200
     allData = []
-    for filename in glob.glob(os.path.join(path, '*.json')): # open all .txt files in "dev-kopi" folder.
+    for filename in glob.glob(os.path.join(path, '*.json')): # open all .json files in "jsons" folder.
         with open(os.path.join(os.getcwd(), filename), 'r', encoding=txtEncoding) as f:
             data = json.load(f)
             data =  {k.lower(): v for k, v in data.items()}
@@ -198,6 +220,7 @@ def combineJsons():
 def main():
     #pdfScraping()
     combineJsons()
+    pass
 
 if __name__ == "__main__":
     main()
