@@ -165,10 +165,25 @@ def pdfScraping():
         with open(f"urls/{filenameNoPdf}.txt", "w") as f:
             f.write(f"https://www.trondheim.kommune.no{filenameBase}")
 
+def combineJsons():
+    path = "jsons/"
+    idcount = 200
+    allData = []
+    for filename in glob.glob(os.path.join(path, '*.json')): # open all .txt files in "dev-kopi" folder.
+        with open(os.path.join(os.getcwd(), filename), 'r', encoding="utf8") as f:
+            data = json.load(f)
+            data['id'] = idcount
+            idcount += 1
+            allData.append(data)
+
+    jsonString = json.dumps(allData)
+    with open(f"allJsons.json", "w") as outfile:
+        outfile.write(jsonString)
 
 
 def main():
-    pdfScraping()
+    #pdfScraping()
+    combineJsons()
 
 if __name__ == "__main__":
     main()
