@@ -12,14 +12,14 @@ function Home () {
                 <a href="https://www.fn.no/om-fn/fns-baerekraftsmaal">FNs nettside</a>
                 og henter alle PDF dokumenter som ligger på Trondheim Kommunes 
                 "<a href="https://www.trondheim.kommune.no/alleplaner/">Alle planer</a>" 
-                side.   
+                side. Dette brukes så for å gi en score som sier noe om hvor mye plandokumentene er relatert til SDG-ene.
             </p>
 
             <h3>Detaljer</h3>
             <p>
                 Prosjektet bruker et corpus fra 
                 <a href="https://github.com/ltgoslo/norec">NoReC</a>: "The Norwegian Review Corpus" som er et set med tekster (anmeldelser) fra større norske nyhetskilder. 
-                Corpus-et brukes som basis for standard norsk tekst. Vi lager to pipelines med distinkte funksjoner: (1) Trenes på SDG beskrivelsene: gjenkjenner i hvilken grad et dokument er relatert til hver av de 17 SDG-ene (2) Trenes på NoReC: gjenkjenner i hvilken grad et dokument har noe med SDG-er å gjøre i det hele tatt. 
+                Corpus-et brukes som basis for standard norsk tekst. Vi lager to pipelines med distinkte funksjoner: (1) Trenes på SDG beskrivelsene: gjenkjenner i hvilken grad et dokument er relatert til hver av de 17 SDG-ene (2) Trenes på NoReC og alle SDG-ene: gjenkjenner i hvilken grad et dokument har noe med SDG-er å gjøre i det hele tatt. 
                 For selve teksten som brukes for å trene pipelinene fjernes alle spesialtegn og ord fra en liste med stopwords. Stopwords listen hentes fra spaCys Norwegian core language model ("nb_core_news_lg"). 
                 Pipelinene blir så gjennom en tf-idf model brukt for å angi korrelasjonen mellom PDF-en og, berekraft og så spesifikke SDG-korellasjoner per side.
                 Deretter multipliseres correlasjons scoren mellom dokument og sdg med mengden SDG-er (17) for å normalisere verdien rundt 1. Så ganges denne verdien igjen med korralasjonsverdien for tilknyttning til bærekraft (SDG) generelt. 
