@@ -6,7 +6,7 @@ Chart.register(...registerables);
 
 
 const SdgPerPage=(props) => {
-    props.documentSdgData.map((e,idx)=> console.log(idx));
+    
         return(
             <>            
             {props.documentSdgData.map((e,idx) => (

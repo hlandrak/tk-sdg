@@ -41,17 +41,22 @@ function TableView (props) {
     const[showModal,setShowModal] = useState(false);
     const[showModalHelp,setShowModalHelp] = useState(false);
 
+
     useEffect(()=>{
         setBarData({labels:['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17'],
                 datasets:[
                     {data: sdgStrength,
-                    backgroundColor: colors
+                    backgroundColor: colors,
+                    label: null
                     }
                 ]})
         setShowModal(showModalHelp);
+  
+
     },[showModalHelp]);    
     
     const rowEvent = (document)=> {
+        console.log(props.sdgCount);
         /*
         Setting sdg counts, and urls and for the construction for the bar charts for each sdg in the modal
         */
@@ -79,7 +84,7 @@ function TableView (props) {
         setSdg16(document.sdg16);
         setSdg17(document.sdg17);
         setShowModalHelp(true);
- 
+
     }
 
 
@@ -87,12 +92,16 @@ function TableView (props) {
     const [checked,setChecked] = useState(true)
     const colors = props.sdgs.map(e => e.hex);
     const sdgNames = props.sdgs.map(e => e.description);    
-
-
+   
+    const onHide = (e) => {
+        setChecked(true);
+        setShowModal(false);
+        setShowModalHelp(false);
+    }
     return(
     <div className='table'>
      
-        <table className="table table-bordered">
+        <table className="table table-bordered" data-filter-control="true" data-show-search-clear-button="true">
             <thead>
                 <tr>
                     <th key={0}>Dokument navn</th>
@@ -128,7 +137,7 @@ function TableView (props) {
         
         {showModal ?
         <div> 
-            <Modal show={showModal} onHide={() => setShowModalHelp(false)}>
+            <Modal show={showModal} onHide={onHide}>
                 <Modal.Header closeButton>
                     <Modal.Title>{name}</Modal.Title>
                 </Modal.Header>
@@ -144,23 +153,19 @@ function TableView (props) {
                             value="1"
                             onChange={(e) =>setChecked(e.currentTarget.checked)}
                         >
-                        {checked ? 'View 1':'View 2'}
+                        {checked ? 'Total SDG stryke':'SDG styrke per side og SDG'}
                         </ToggleButton>
                         
                     </ButtonGroup>
                     </>
                     {checked ? 
                     <Bar 
+                        
                         data={barData}
+                        
                         options={{
-                            title:{
-                              display:true,
-                              text:'SDG styrke for dokument per sdg',
-                              fontSize:20
-                            },
-                            legend:{
-                                display:false
-                              },
+                              title:'SDG styrke for hele dokumentet per SDG',
+                              legend: {position: 'none',display: false, maxLines:0},
                               scales: {
                                 y:
                                   {
@@ -180,7 +185,7 @@ function TableView (props) {
                     <a href={url}>Link til dokumentet</a>   
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModalHelp(false)}>
+                <Button variant="secondary" onClick={() => setShowModalHelp(false) && setChecked(true)}>
                     Lukk
                 </Button>
                 </Modal.Footer>
