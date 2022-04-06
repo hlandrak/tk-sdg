@@ -8,6 +8,7 @@ import TableView from './pages/tableView';
 import FlowChart from './pages/flowChart';
 import Home from './pages/home';
 import PieChartPage from './pages/pieChart';
+import FooterPage from './components/footer';
 
 import { Navbar, Nav, Container } from 'react-bootstrap';
 
@@ -79,8 +80,9 @@ function App () {
   
   
   return(
+    <div>
       <div>
-          <Navbar collapseOnSelect fixed='top' expand='sm' bg='dark' variant='dark'>
+          <Navbar collapseOnSelect fixed='top' expand='sm' bg='secondary' variant='dark'>
             <Container>
               <Navbar.Toggle aria-controls='responsive-navbar-nav'/>
               <Navbar.Collapse id='responsive-navbar-nav'>
@@ -101,7 +103,13 @@ function App () {
               <Route path='/kake' element={<PieChartPage pieData={pieData} sdgs={sdgs} loading={loading}/>} />
           </Routes>
         </Router>
+
+        
       </div>
+        <div className='footer'>
+          <FooterPage></FooterPage>
+        </div>
+    </div>
     )
 }
 

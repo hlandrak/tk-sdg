@@ -104,7 +104,7 @@ function TableView (props) {
         <table className="table table-bordered" data-filter-control="true" data-show-search-clear-button="true">
             <thead>
                 <tr>
-                    <th key={0}>Dokument navn</th>
+                    <th key={0}>Dokumentnavn</th>
                     {props.sdgs.map((sdg)=>(
                     <th key={sdg.id} style={{backgroundColor: sdg.hex}}>{sdg.number}</th>
                     ))}
@@ -164,8 +164,10 @@ function TableView (props) {
                         data={barData}
                         
                         options={{
+                            plugins:{
                               title:'SDG styrke for hele dokumentet per SDG',
-                              legend: {position: 'none',display: false, maxLines:0},
+                              legend: {position: 'none',display: false},
+                            },
                               scales: {
                                 y:
                                   {
@@ -185,7 +187,7 @@ function TableView (props) {
                     <a href={url}>Link til dokumentet</a>   
                 </Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModalHelp(false) && setChecked(true)}>
+                <Button variant="secondary" onClick={() => onHide()}>
                     Lukk
                 </Button>
                 </Modal.Footer>

@@ -17,20 +17,29 @@ function PieChartPage(props) {
     return (
         <div className='main'>{loading?<p>Loading</p>: 
         <div>
-            <h3>Total score SDGer Trondheim kommune</h3>
+            
             <div className='chart'>
                 <Pie
                     data={props.pieData[0]}
                     options={{
                         responsive:true,
-                        label: {
+                        plugins: {
+                        legend: {
                             display:true,
-                            position:'chartArea',
-                            align: 'end',
+                            position:'right',
                             font:{
-                                size: 'small'
+                                size: '10px'
+                            }
+                        },
+                        title:{
+                            display:true,
+                            text: "Total score SDGer Trondheim kommune",
+                            font: {
+                                weight: 'bold',
+                                size: '20px'
                             }
                         }
+                    }
                     }}
                 />
             </div>

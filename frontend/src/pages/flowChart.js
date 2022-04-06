@@ -9,7 +9,8 @@ function FlowChart(props) {
   return (
   
       <div className='main'>
-        <h2 >React Simple Sankey Chart Example</h2>
+        <h2 >Et flytdiagram med kobling mellom dokumenter og SDGer</h2>
+        <p className='split-para'>Documenter <span>SDG</span></p>
         <Chart
           width={'100%'}
           height={'1500px'}
