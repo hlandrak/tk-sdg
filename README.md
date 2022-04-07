@@ -8,6 +8,25 @@ This is a comissioned project for Trondheim municipality made to relate their pl
 ## Configuration
 
 The software is based on Python and JavaScript (React).
+### Set-Up
+Steps:
+In terminal 1:
+1. create a virtual environment
+2. cd frontend
+3. npm install
+4. cd..
+5. cd backend
+6. pip install -r requirements.txt
+7. pip install django-cors-header
+8. pip install psycopg2 /(Mac add -binary)
+9. python manage.py migrate
+10. py manage.py makemigration
+11. py manage.py runserver
+In terminal 2:
+1. find your folder + start your virtual environment
+2. cd frontend
+3. npm start
+
 ### Required Packages
 ## Installation
 
