@@ -27,7 +27,11 @@ In terminal 2:
 2. cd frontend
 3. npm start
 
+## Update database
+To update the database to include more pdfs you will need to upload your pdf to the backend/technical/pdfs folder. After this you can run py predicting.py and it should automatically update the allJsons.json file to include your pdf. You can now upload the .json-file to the database via the django interface in the application. 
+
 ### Required Packages
+Required packages found in requirements.txt
 ## Installation
 
 ## File Manifest
@@ -44,17 +48,16 @@ In terminal 2:
 **predicting.py**: The python file containing functions related to natural language processing and processing of correlation values (and main()).
 ### JavaScript (React)
 
-
 ## Copyright & Licencing
-
-## Contact
+See LICENCE
 
 ## Bugs
 
 ## Troubleshooting
 
 ## Credits & Acknowledgements
-
-## Changelog
-
-## News
+Håvard Landråk
+Ivar Refsdal
+Ole Martin Ingebo
+Marcus Meek
+Jonathan Holme
